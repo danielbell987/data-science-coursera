@@ -1,0 +1,102 @@
+Reproducible Research - Assignment 1
+====================================
+Daniel Bell
+
+
+### Step 1: Loading and preprocessing the data
+
+Here the 'activity' dataset is loaded into R and stored in the variable 'activityData'.
+
+```{r, echo=TRUE, results='hide'}
+activityData <- read.csv("C:/Data/Coursera/activity.csv")
+```
+
+### Step 2: What is mean total number of steps taken per day?
+
+First, we create a new data frame consisting of the total number of steps taken for each day. The 'plyr' package is installed in order make use of the 'ddply' function.
+
+```{r, echo=TRUE, warning=FALSE}
+library(plyr)
+totalStepsDay<- ddply(activityData,~date,summarise,sum=sum(steps))
+```
+
+Next a histogram has been created containing the total number of steps for each day.
+```{r, echo=TRUE}
+hist(totalStepsDay$sum, breaks=5, xlab="Total number of steps taken each day", col="red")
+```
+
+Finally the mean number of steps taken per day is calculated with the output reported below.
+```{r, echo=TRUE}
+ddply(totalStepsDay,~date,summarise,mean=mean(sum),median=median(sum))
+```
+
+### Step 3: What is the average daily activity pattern?
+
+Below is the code that plots a timeseries graph showing the average number of steps taken in each 5 minute interval per day.
+
+```{r, echo=TRUE}
+totalStepsInterval<- ddply(activityData,~interval,summarise,mean=mean(steps, na.rm = TRUE))
+plot(x=totalStepsInterval$interval, y=totalStepsInterval$mean, xlab="5 minute intervals", ylab="Average frequency per day", type="l")
+```
+
+To figure out which five minute interval contains the highest average number of steps, the following code is run with the output reported below.
+
+```{r, echo=TRUE}
+totalStepsInterval[which.max(totalStepsInterval$mean), 1]
+```
+
+### Step 4: Imputing missing values
+
+To begin the total number of missing values found aacross teh whole dataset was calculated and is reported below.
+
+```{r, echo=TRUE}
+sum(is.na(activityData$steps))
+```
+
+To impute missing data it was decided that the average 5-minute interval total number of steps value would be used. This was chosen as there were a number of days within the dataset with no data at all, meaning it would be impossible to simply calculate the mean for these days and add this into the missing values.
+
+This is tehn saved in a new dataset called 'completeData'.
+
+```{r, echo=TRUE}
+completeData <- activityData
+naIndices <- which(is.na(completeData$steps))
+for (i in naIndices) {
+    completeData$steps[i] <- with(totalStepsInterval, mean[interval == completeData$interval[i]])
+}
+```
+
+The two tables highlight the differences between the upper table 'activityData' and the lower table 'completeData'.
+
+```{r, echo=TRUE}
+head(activityData)
+head(completeData)
+```
+
+To complete this step we create another histogram for the newly created 'completeData' dataset.
+
+```{r, echo=TRUE}
+totalStepsDayComplete<- ddply(completeData,~date,summarise,sum=sum(steps))
+```
+
+Next a histogram has been created containing the total number of steps for each day.
+```{r, echo=TRUE}
+hist(totalStepsDayComplete$sum, breaks=5, xlab="Total number of steps taken each day", col="blue")
+```
+
+If you compare this histogram witht he earlier one you'll see that the results are very similar, however it seems as though the frequency of '10,000 - 15,000' steps has increased whereas '15,000 - 20,000' has decreased.
+
+### Step 5: Are there differences in activity patterns between weekdays and weekends?
+
+To look at weekday and weekend patterns we first add a new factor variable to the dataset indictating whether a given day is on the weekend or a weekday.
+
+```{r, echo=TRUE, results='hide', warning=FALSE}
+library(timeDate)
+completeData$isWeekday <- isWeekday(completeData$date, wday=1:5)
+```
+
+```{r, echo=TRUE, results='hide', warning=FALSE}
+library(lattice)
+averageStepsWeekday<- ddply(completeData,~interval,summarise,mean=mean(steps, na.rm = TRUE))
+averageStepsWeekend<- ddply(completeData,~isWeekday,summarise,mean=mean(steps, na.rm = TRUE))
+xyplot(steps ~ interval| isWeekday, data = completeData, type = "l", xlab = "Interval", ylab = "Number of steps", layout=c(1,2))
+```
