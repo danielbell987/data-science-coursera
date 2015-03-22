@@ -6,6 +6,7 @@
 ## Pre-a) Load required packages
 library(data.table)
 library(reshape2)
+library(knitr)
 
 ## Pre-b) Set and get the working directory
 setwd("C:/Data/Coursera/Getting and Cleaning Data/Course Project/Data")
@@ -82,6 +83,48 @@ setkey(data, subject, activityNumber, activityName)
 data <- data.table(melt(data, key(data), variable.name="featureDataCode"))
 data <- merge(data, features[, list(featureNumber, featureDataCode, featureName)], by="featureDataCode", all.x=TRUE)
 
-## 5-d) 
-dt$activity <- factor(dt$activityName)
-dt$feature <- factor(dt$featureName)
+## 5-d) Set the activityName and featureName variables as type factor
+data$activity <- factor(data$activityName)
+data$feature <- factor(data$featureName)
+
+## 5-e) Seperate all of the features in the feature name variable
+  ## Features with 1 category
+data$featJerk <- factor(grepl("Jerk", data$feature), labels=c(NA, "Jerk"))
+data$featMagnitude <- factor(grepl("Mag", data$feature), labels=c(NA, "Magnitude"))
+
+  ## Features with 2 categories
+n <- 2
+y <- matrix(seq(1, n), nrow=n)
+
+x <- matrix(c(grepl("^t", data$feature), grepl("^f", data$feature)), ncol=nrow(y))
+data$featDomain <- factor(x %*% y, labels=c("Time", "Freq"))
+
+x <- matrix(c(grepl("Acc", data$feature), grepl("Gyro", data$feature)), ncol=nrow(y))
+data$featInstrument <- factor(x %*% y, labels=c("Accelerometer", "Gyroscope"))
+
+x <- matrix(c(grepl("BodyAcc", data$feature), grepl("GravityAcc", data$feature)), ncol=nrow(y))
+data$featAcceleration <- factor(x %*% y, labels=c(NA, "Body", "Gravity"))
+
+x <- matrix(c(grepl("mean()", data$feature), grepl("std()", data$feature)), ncol=nrow(y))
+data$featVariable <- factor(x %*% y, labels=c("Mean", "SD"))
+
+  ## Features with 3 categories
+n <- 3
+y <- matrix(seq(1, n), nrow=n)
+
+x <- matrix(c(grepl("-X", data$feature), grepl("-Y", data$feature), grepl("-Z", data$feature)), ncol=nrow(y))
+data$featAxis <- factor(x %*% y, labels=c(NA, "X", "Y", "Z"))
+
+
+## 6-a) Set the keys for the tidy dataset and generate it
+setkey(data, subject, activity, featDomain, featAcceleration, featInstrument, featJerk, featMagnitude, featVariable, featAxis)
+dataTidy <- data[, list(count = .N, average = mean(value)), by=key(data)]
+
+## 6-b) Save the tidy dataset in a new file
+dataFile <- file.path(path, "SamsungTidyDataset.txt")
+write.table(dataTidy, dataFile, quote=FALSE, sep="\t", row.names=FALSE)
+
+## 6-c) Create the codebook for upload (must go up one directory for the required r markdown file)
+setwd("C:/Data/Coursera/Getting and Cleaning Data/Course Project")
+knit("codeBookTemplate.rmd", output="codebook.md", encoding="ISO8859-1", quiet=TRUE)
+markdownToHTML("codebook.md", "codebook.html")
