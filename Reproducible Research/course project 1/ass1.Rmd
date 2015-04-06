@@ -55,7 +55,7 @@ sum(is.na(activityData$steps))
 
 To impute missing data it was decided that the average 5-minute interval total number of steps value would be used. This was chosen as there were a number of days within the dataset with no data at all, meaning it would be impossible to simply calculate the mean for these days and add this into the missing values.
 
-This is tehn saved in a new dataset called 'completeData'.
+This is then saved in a new dataset called 'completeData'.
 
 ```{r, echo=TRUE}
 completeData <- activityData
@@ -94,9 +94,12 @@ library(timeDate)
 completeData$isWeekday <- isWeekday(completeData$date, wday=1:5)
 ```
 
+Next the average number of steps taken across each 5 minute interval is calculated for both weekdays and weekends. This is then plotted to the panel plot below, the top plot being weekdays and the bottom plot being weekends.
 ```{r, echo=TRUE, results='hide', warning=FALSE}
-library(lattice)
-averageStepsWeekday<- ddply(completeData,~interval,summarise,mean=mean(steps, na.rm = TRUE))
-averageStepsWeekend<- ddply(completeData,~isWeekday,summarise,mean=mean(steps, na.rm = TRUE))
-xyplot(steps ~ interval| isWeekday, data = completeData, type = "l", xlab = "Interval", ylab = "Number of steps", layout=c(1,2))
+library(ggplot2)
+averages <- aggregate(steps ~ interval + isWeekday, data=completeData, mean)
+averages$isWeekday <- gsub("TRUE", "Weekday", averages$isWeekday)
+averages$isWeekday <- gsub("FALSE", "Weekend", averages$isWeekday)
+ggplot(averages, aes(interval, steps)) + geom_line() + facet_grid(isWeekday ~ .) +
+    xlab("5-minute interval") + ylab("Number of steps")
 ```
