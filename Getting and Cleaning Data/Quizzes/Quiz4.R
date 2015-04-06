@@ -3,21 +3,21 @@
 ## Quiz 4
 
 ## Question 1
-dataUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv"
-destData <- "C:/Data/Coursera/Getting and Cleaning Data/Quizzes/communityData.csv"
-download.file(url = dataUrl, destfile = destData)
-community <- read.csv(file = destData)
+url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv"
+file <- "C:/Data/Coursera/GettingAndCleaningData/communityData.csv"
+download.file(url = url, destfile = file)
+community <- read.csv(file = file)
 community <- data.table(community)
 
 split <- strsplit(names(community), "wgtp")
 split[[123]]
 
 ## Question 2
-dataUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv "
-destData <- "C:/Data/Coursera/Getting and Cleaning Data/Quizzes/GDPdata.csv"
-download.file(url = dataUrl, destfile = destData)
+url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FGDP.csv "
+file <- "C:/Data/Coursera/GettingAndCleaningData/GDPdata.csv"
+download.file(url = url, destfile = file)
 
-dtGDP <- data.table(read.csv(destData, skip=4, nrows=215, stringsAsFactors=FALSE))
+dtGDP <- data.table(read.csv(file, skip=4, nrows=215, stringsAsFactors=FALSE))
 dtGDP <- dtGDP[X != ""]
 dtGDP <- dtGDP[, list(X, X.1, X.3, X.4)]
 setnames(dtGDP, c("X", "X.1", "X.3", "X.4"), c("CountryCode", "rankingGDP", "Long.Name", "gdp"))
@@ -26,19 +26,21 @@ mean(gdp, na.rm=TRUE)
 
 
 ## Question 3
-isUnited <- grepl("^United",dtGDP$Long.Name)
+isUnited <- grepl("^United", dtGDP$Long.Name)
 summary(isUnited)
+
 
 ## Question 4
 url <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2FEDSTATS_Country.csv"
-f <- file.path(getwd(), "EDSTATS_Country.csv")
-download.file(url, f)
-dtEd <- data.table(read.csv(f))
+file <- "C:/Data/Coursera/GettingAndCleaningData/EDSTATS_Country.csv")
+download.file(url, file)
+dtEd <- data.table(read.csv(file))
+
 dt <- merge(dtGDP, dtEd, all=TRUE, by=c("CountryCode"))
 isFiscalYearEnd <- grepl("fiscal year end", tolower(dt$Special.Notes))
 isJune <- grepl("june", tolower(dt$Special.Notes))
 table(isFiscalYearEnd, isJune)
-dt[isFiscalYearEnd & isJune, Special.Notes]
+
 
 ## Question 5
 library(quantmod) 
