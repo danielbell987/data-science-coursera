@@ -1,4 +1,6 @@
-## GCD Quiz 3
+## Daniel Bell
+## Getting and Cleaning Data
+## Quiz 3
 
 ## Question 1
 download.file(url = "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv" , destfile = "community.csv")

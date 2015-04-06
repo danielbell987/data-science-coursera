@@ -1,4 +1,6 @@
-## GCD Quiz 4
+## Daniel Bell
+## Getting and Cleaning Data
+## Quiz 4
 
 ## Question 1
 dataUrl <- "https://d396qusza40orc.cloudfront.net/getdata%2Fdata%2Fss06hid.csv"
