@@ -5,10 +5,11 @@ Daniel Bell
 
 ### Step 1: Loading and preprocessing the data
 
-Here the 'activity' dataset is loaded into R and stored in the variable 'activityData'.
+Here the 'activity' dataset is loaded into R and stored in the variable 'activityData'. We assume here that the data has already been downloaded into the correct directory.
+
 
 ```{r, echo=TRUE, results='hide'}
-activityData <- read.csv("C:/Data/Coursera/activity.csv")
+activityData <- read.csv("C:/Data/Coursera/Reproducible Research/activity.csv")
 ```
 
 ### Step 2: What is mean total number of steps taken per day?
@@ -21,11 +22,13 @@ totalStepsDay<- ddply(activityData,~date,summarise,sum=sum(steps))
 ```
 
 Next a histogram has been created containing the total number of steps for each day.
+
 ```{r, echo=TRUE}
 hist(totalStepsDay$sum, breaks=5, xlab="Total number of steps taken each day", col="red")
 ```
 
 Finally the mean number of steps taken per day is calculated with the output reported below.
+
 ```{r, echo=TRUE}
 ddply(totalStepsDay,~date,summarise,mean=mean(sum),median=median(sum))
 ```
@@ -79,6 +82,7 @@ totalStepsDayComplete<- ddply(completeData,~date,summarise,sum=sum(steps))
 ```
 
 Next a histogram has been created containing the total number of steps for each day.
+
 ```{r, echo=TRUE}
 hist(totalStepsDayComplete$sum, breaks=5, xlab="Total number of steps taken each day", col="blue")
 ```
@@ -95,6 +99,7 @@ completeData$isWeekday <- isWeekday(completeData$date, wday=1:5)
 ```
 
 Next the average number of steps taken across each 5 minute interval is calculated for both weekdays and weekends. This is then plotted to the panel plot below, the top plot being weekdays and the bottom plot being weekends.
+
 ```{r, echo=TRUE, results='hide', warning=FALSE}
 library(ggplot2)
 averages <- aggregate(steps ~ interval + isWeekday, data=completeData, mean)
