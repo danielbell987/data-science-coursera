@@ -1,0 +1,49 @@
+Getting and Cleaning Data Course Project
+==============================================
+
+Daniel Bell
+----------------------------------------------
+
+### Samsung Galaxy S acceleramotor data - Codebook
+
+
+#### Variables contained in the tidy dataset
+Name             | Description
+-----------------|------------
+subject          | The ID of the subject who was studied
+activity         | name of the activity the subject is currently performing
+featDomain       | Boolean indicating indicating either time or frequency
+featInstrument   | Instrument used to measure signal
+featAcceleration | Acceleration signal
+featVariable     | Either the mean or standard deviation of observation
+featJerk         | Jerk signal
+featMagnitude    | Magnitude of the signals
+featAxis         | 3-axial signals in the X, Y and Z directions (X, Y, or Z)
+featCount        | Count of data points used to compute average
+featAverage      | Average of each variable for each activity and each subject
+
+#### Summary of Variables
+```{r, echo=TRUE}
+summary(dataTidy)
+```
+
+#### A sample of the Data
+```{r, echo=TRUE}
+head(dataTidy)
+```
+
+#### Structure of the Tidy Dataset
+```{r, echo=TRUE}
+str(dataTidy)
+```
+
+#### Keys
+```{r, echo=TRUE}
+key(dataTidy)
+```
+
+#### Output Dataset
+The tidy dataset was created in the run_analysis.R script and is saved in the same location as the script.
+
+
+ 
