@@ -129,11 +129,11 @@ setkey(data, subject, activity, featDomain, featAcceleration, featInstrument, fe
 dataTidy <- data[, list(count = .N, average = mean(value)), by=key(data)]
 
 ## 6-b) Save the tidy dataset in a new file
+setwd("C:/Users/IBM_ADMIN/Git/data-science-coursera/Getting and Cleaning Data/Course Project/")
 dataFile <- file.path(path, "SamsungTidyDataset.txt")
 write.table(dataTidy, dataFile, quote=FALSE, sep="\t", row.names=FALSE)
 
-## 6-c) Create the codebook for upload (must go up one directory for the required r markdown file)
+## 6-c) Create the codebook for upload
 library(markdown)
-setwd("C:/Users/IBM_ADMIN/Git/data-science-coursera/Getting and Cleaning Data/Course Project/")
 knit("codeBookTemplate.rmd", output="codebook.md", encoding="ISO8859-1", quiet=TRUE)
 markdownToHTML("codebook.md", "codebook.html")
