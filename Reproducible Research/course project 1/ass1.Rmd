@@ -7,6 +7,11 @@ Daniel Bell
 
 Here the 'activity' dataset is loaded into R and stored in the variable 'activityData'. We assume here that the data has already been downloaded into the correct directory.
 
+The latest download was taken from the url "https://class.coursera.org/repdata-013/human_grading/view/courses/973514/assessments/3/submissions" at 
+```{r, echo = FALSE} 
+as.character(Sys.time())
+```
+
 
 ```{r, echo=TRUE, results='hide'}
 activityData <- read.csv("C:/Data/Coursera/Reproducible Research/activity.csv")
@@ -108,3 +113,4 @@ averages$isWeekday <- gsub("FALSE", "Weekend", averages$isWeekday)
 ggplot(averages, aes(interval, steps)) + geom_line() + facet_grid(isWeekday ~ .) +
     xlab("5-minute interval") + ylab("Number of steps")
 ```
+
