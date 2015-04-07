@@ -130,6 +130,7 @@ dataTidy <- data[, list(count = .N, average = mean(value)), by=key(data)]
 
 ## 6-b) Save the tidy dataset in a new file
 setwd("C:/Users/IBM_ADMIN/Git/data-science-coursera/Getting and Cleaning Data/Course Project/")
+path <- getwd()
 dataFile <- file.path(path, "SamsungTidyDataset.txt")
 write.table(dataTidy, dataFile, quote=FALSE, sep="\t", row.names=FALSE)
 
